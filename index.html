@@ -3,498 +3,158 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sistem Data Siswa SD</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <title>Manajemen Data Siswa SD</title>
     <style>
       body {
-        font-family: "Inter", sans-serif;
-        background-color: #f3f4f6;
-        color: #374151;
+        font-family: sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
       }
       .container {
-        max-width: 960px;
-        margin: 2rem auto;
-        padding: 2rem;
-        background-color: #ffffff;
-        border-radius: 1rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 800px;
+        margin: auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
       }
-      .form-section {
-        margin-bottom: 2rem;
-        padding: 1.5rem;
-        border: 1px solid #e5e7eb;
-        border-radius: 0.75rem;
-        background-color: #f9fafb;
+      section {
+        margin-bottom: 30px;
       }
-      .button-primary {
-        @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out;
+      label,
+      input,
+      button,
+      select {
+        display: block;
+        width: 100%;
+        margin-top: 8px;
+        margin-bottom: 12px;
+        font-size: 1em;
       }
-      .button-secondary {
-        @apply bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out;
+      input,
+      select {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
       }
-      .input-field {
-        @apply mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm;
+      button {
+        background-color: #007bff;
+        color: #fff;
+        padding: 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
       }
-      .label {
-        @apply block text-sm font-medium text-gray-700;
+      button:hover {
+        background-color: #0056b3;
       }
-      .message-box {
-        @apply p-4 mt-4 rounded-lg text-sm font-medium;
-      }
-      .message-box.success {
-        @apply bg-green-100 text-green-700;
-      }
-      .message-box.error {
-        @apply bg-red-100 text-red-700;
-      }
-      .loading-spinner {
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #3498db;
-        border-radius: 50%;
-        width: 24px;
-        height: 24px;
-        animation: spin 1s linear infinite;
-        display: inline-block;
-        vertical-align: middle;
-        margin-left: 0.5rem;
-      }
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
+      .result {
+        background-color: #e9ecef;
+        padding: 10px;
+        border-radius: 4px;
+        white-space: pre-wrap;
       }
     </style>
   </head>
-  <body class="bg-gray-100">
+  <body>
     <div class="container">
-      <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">
-        Sistem Data Siswa SD
-      </h1>
+      <h1>Aplikasi Data Siswa SD</h1>
 
-      <!-- Notifikasi -->
-      <div id="notification-area" class="message-box hidden"></div>
-
-      <!-- Bagian Upload Excel Dapodik -->
-      <div class="form-section">
-        <h2 class="text-xl font-semibold mb-4 text-gray-700">
-          1. Unggah Data Excel Dapodik
-        </h2>
-        <p class="text-sm text-gray-600 mb-4">
-          Pastikan file Excel Anda memiliki header yang sesuai (seperti: No,
-          Nama, NIPD, JK, NISN, dll., dengan nama unik untuk data ayah/ibu/wali)
-          di **baris ke-6**, dan data siswa dimulai dari **baris ke-7**.
-        </p>
-        <form id="excelUploadForm" class="space-y-4">
-          <div>
-            <label for="excelFile" class="label"
-              >Pilih File Excel (.xlsx)</label
-            >
-            <input
-              type="file"
-              id="excelFile"
-              accept=".xlsx, .xls"
-              class="input-field"
-              required
-            />
-          </div>
-          <button type="submit" class="button-primary">
-            <span id="excelUploadText">Impor Data Excel</span>
-            <span
-              id="excelLoadingSpinner"
-              class="loading-spinner hidden"
-            ></span>
-          </button>
+      <section>
+        <h2>Unggah Data Excel Dapodik</h2>
+        <form id="formExcel">
+          <input type="file" id="excelFile" accept=".xls,.xlsx" required />
+          <button type="submit">Unggah Excel</button>
         </form>
-      </div>
+      </section>
 
-      <!-- Bagian Upload KK dan Akte -->
-      <div class="form-section">
-        <h2 class="text-xl font-semibold mb-4 text-gray-700">
-          2. Unggah Dokumen (KK / Akte)
-        </h2>
-        <form id="documentUploadForm" class="space-y-4">
-          <div>
-            <label for="docType" class="label">Jenis Dokumen</label>
-            <select id="docType" class="input-field" required>
-              <option value="">Pilih Jenis Dokumen</option>
-              <option value="kk">Kartu Keluarga (KK)</option>
-              <option value="akte">Akta Kelahiran</option>
-            </select>
-          </div>
-          <div>
-            <label for="nisnDoc" class="label">NISN Siswa</label>
-            <input
-              type="text"
-              id="nisnDoc"
-              placeholder="Contoh: 1234567890"
-              class="input-field"
-              required
-            />
-          </div>
-          <div>
-            <label for="namaLengkapDoc" class="label">Nama Lengkap Siswa</label>
-            <input
-              type="text"
-              id="namaLengkapDoc"
-              placeholder="Contoh: Budi Santoso"
-              class="input-field"
-              required
-            />
-          </div>
-          <div>
-            <label for="documentFile" class="label"
-              >Pilih File Dokumen (.pdf, .jpg, .png)</label
-            >
-            <input
-              type="file"
-              id="documentFile"
-              accept=".pdf, .jpg, .jpeg, .png"
-              class="input-field"
-              required
-            />
-          </div>
-          <button type="submit" class="button-primary">
-            <span id="docUploadText">Unggah Dokumen</span>
-            <span id="docLoadingSpinner" class="loading-spinner hidden"></span>
-          </button>
+      <section>
+        <h2>Unggah Dokumen KK / Akte</h2>
+        <form id="formDokumen">
+          <input type="text" id="dokNISN" placeholder="NISN" required />
+          <input type="text" id="dokNama" placeholder="Nama Siswa" required />
+          <select id="dokJenis">
+            <option value="kk">Kartu Keluarga</option>
+            <option value="akte">Akta Kelahiran</option>
+          </select>
+          <input
+            type="file"
+            id="dokFile"
+            accept=".pdf,.jpg,.jpeg,.png"
+            required
+          />
+          <button type="submit">Unggah Dokumen</button>
         </form>
-      </div>
+      </section>
 
-      <!-- Bagian Pencarian Data Siswa -->
-      <div class="form-section">
-        <h2 class="text-xl font-semibold mb-4 text-gray-700">
-          3. Cari Data Siswa
-        </h2>
-        <form id="searchForm" class="flex flex-col sm:flex-row gap-4 items-end">
-          <div class="flex-grow w-full">
-            <label for="searchQuery" class="label"
-              >NISN / Nama Lengkap / Nama Tidak Lengkap</label
-            >
-            <input
-              type="text"
-              id="searchQuery"
-              placeholder="Cari siswa..."
-              class="input-field"
-            />
-          </div>
-          <button type="submit" class="button-primary w-full sm:w-auto">
-            <span id="searchText">Cari Data</span>
-            <span
-              id="searchLoadingSpinner"
-              class="loading-spinner hidden"
-            ></span>
-          </button>
-        </form>
-
-        <div id="searchResults" class="mt-6">
-          <h3 class="text-lg font-medium text-gray-800 mb-3">
-            Hasil Pencarian:
-          </h3>
-          <div id="resultsTableContainer" class="overflow-x-auto">
-            <table
-              class="min-w-full divide-y divide-gray-200 shadow-sm rounded-lg overflow-hidden"
-            >
-              <thead class="bg-gray-50">
-                <tr id="tableHeaders">
-                  <!-- Headers will be populated by JS -->
-                </tr>
-              </thead>
-              <tbody id="tableBody" class="bg-white divide-y divide-gray-200">
-                <tr>
-                  <td
-                    colspan="99"
-                    class="px-6 py-4 whitespace-nowrap text-center text-gray-500"
-                  >
-                    Belum ada hasil pencarian.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+      <section>
+        <h2>Cari Data Siswa</h2>
+        <input
+          type="text"
+          id="cariInput"
+          placeholder="Masukkan NISN atau Nama"
+        />
+        <button onclick="cariData()">Cari</button>
+        <div id="hasilPencarian" class="result"></div>
+      </section>
     </div>
 
     <script>
-      // PENTING: Ganti dengan Web app URL dari Google App Script Anda
-      const APP_SCRIPT_URL =
-        "https://script.google.com/macros/s/AKfycbyURTu5S9YWsKneATrEx-Y8SaFM4QyNnf3YhElPxF1JqgcFQFCzmULm3kXEBxHOiZdUvg/exec";
+      const scriptURL =
+        "https://script.google.com/macros/s/AKfycbxT4lXzbzPJKHCUVcmNHrzqPUBTOXHdTeVNDNSKisY4Oj5cLjiXo-kOa2b367A5A70HDg/exec";
 
-      const notificationArea = document.getElementById("notification-area");
-      const excelUploadForm = document.getElementById("excelUploadForm");
-      const excelFile = document.getElementById("excelFile");
-      const excelUploadText = document.getElementById("excelUploadText");
-      const excelLoadingSpinner = document.getElementById(
-        "excelLoadingSpinner"
-      );
-
-      const documentUploadForm = document.getElementById("documentUploadForm");
-      const docType = document.getElementById("docType");
-      const nisnDoc = document.getElementById("nisnDoc");
-      const namaLengkapDoc = document.getElementById("namaLengkapDoc");
-      const documentFile = document.getElementById("documentFile");
-      const docUploadText = document.getElementById("docUploadText");
-      const docLoadingSpinner = document.getElementById("docLoadingSpinner");
-
-      const searchForm = document.getElementById("searchForm");
-      const searchQuery = document.getElementById("searchQuery");
-      const searchText = document.getElementById("searchText");
-      const searchLoadingSpinner = document.getElementById(
-        "searchLoadingSpinner"
-      );
-      const tableHeaders = document.getElementById("tableHeaders");
-      const tableBody = document.getElementById("tableBody");
-
-      /**
-       * Menampilkan pesan notifikasi.
-       * @param {string} message Pesan yang akan ditampilkan.
-       * @param {'success'|'error'} type Tipe pesan (success/error).
-       */
-      function showNotification(message, type) {
-        notificationArea.classList.remove("hidden", "success", "error");
-        notificationArea.textContent = message;
-        notificationArea.classList.add(type);
-        notificationArea.classList.remove(
-          type === "success" ? "error" : "success"
-        ); // Ensure only one type class is applied
-        setTimeout(() => {
-          notificationArea.classList.add("hidden");
-        }, 5000); // Pesan akan hilang setelah 5 detik
-      }
-
-      /**
-       * Mengirim permintaan ke Google App Script.
-       * @param {string} url URL App Script.
-       * @param {FormData | null} formData Objek FormData untuk upload file, atau null.
-       * @param {string} method Metode HTTP (GET/POST).
-       * @returns {Promise<Object>} Respon dari App Script.
-       */
-      async function sendRequest(url, formData = null, method = "GET") {
-        try {
-          const options = {
-            method: method,
-            // mode: 'no-cors' // Tidak perlu no-cors jika App Script sudah diset Anyone, even anonymous
-          };
-
-          if (formData) {
-            options.body = formData;
-            // Headers Content-Type untuk FormData akan diatur secara otomatis oleh browser
-          }
-
-          const response = await fetch(url, options);
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(
-              `HTTP error! status: ${response.status}, message: ${errorText}`
-            );
-          }
-          return await response.json();
-        } catch (error) {
-          console.error("Fetch error:", error);
-          throw error;
-        }
-      }
-
-      // --- Event Listener untuk Upload Excel ---
-      excelUploadForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const file = excelFile.files[0];
-
-        if (!file) {
-          showNotification("Pilih file Excel terlebih dahulu.", "error");
-          return;
-        }
-
-        excelUploadText.textContent = "Mengunggah...";
-        excelLoadingSpinner.classList.remove("hidden");
-        excelUploadForm.querySelector("button").disabled = true;
-
-        try {
+      // Unggah Excel
+      document
+        .getElementById("formExcel")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const file = document.getElementById("excelFile").files[0];
           const formData = new FormData();
-          formData.append("action", "uploadExcel");
-          formData.append("file", file); // 'file' harus sesuai dengan nama di App Script
+          formData.append("file", file);
 
-          const result = await sendRequest(APP_SCRIPT_URL, formData, "POST");
-
-          if (result.status === "success") {
-            showNotification(result.message, "success");
-            excelFile.value = ""; // Reset input file
-          } else {
-            showNotification(
-              result.message || "Gagal mengunggah file Excel.",
-              "error"
-            );
-          }
-        } catch (error) {
-          showNotification(
-            "Terjadi kesalahan saat mengunggah Excel: " + error.message,
-            "error"
-          );
-        } finally {
-          excelUploadText.textContent = "Impor Data Excel";
-          excelLoadingSpinner.classList.add("hidden");
-          excelUploadForm.querySelector("button").disabled = false;
-        }
-      });
-
-      // --- Event Listener untuk Upload Dokumen (KK/Akte) ---
-      documentUploadForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const file = documentFile.files[0];
-        const type = docType.value;
-        const nisn = nisnDoc.value.trim();
-        const nama = namaLengkapDoc.value.trim();
-
-        if (!file || !type || !nisn || !nama) {
-          showNotification(
-            "Lengkapi semua kolom untuk mengunggah dokumen.",
-            "error"
-          );
-          return;
-        }
-
-        docUploadText.textContent = "Mengunggah...";
-        docLoadingSpinner.classList.remove("hidden");
-        documentUploadForm.querySelector("button").disabled = true;
-
-        try {
-          const formData = new FormData();
-          formData.append("action", "uploadDocument");
-          formData.append("file", file); // 'file' harus sesuai dengan nama di App Script
-          formData.append("docType", type);
-          formData.append("nisn", nisn);
-          formData.append("namaLengkap", nama);
-
-          const result = await sendRequest(APP_SCRIPT_URL, formData, "POST");
-
-          if (result.status === "success") {
-            showNotification(result.message, "success");
-            documentFile.value = ""; // Reset input file
-            docType.value = "";
-            nisnDoc.value = "";
-            namaLengkapDoc.value = "";
-          } else {
-            showNotification(
-              result.message || "Gagal mengunggah dokumen.",
-              "error"
-            );
-          }
-        } catch (error) {
-          showNotification(
-            "Terjadi kesalahan saat mengunggah dokumen: " + error.message,
-            "error"
-          );
-        } finally {
-          docUploadText.textContent = "Unggah Dokumen";
-          docLoadingSpinner.classList.add("hidden");
-          documentUploadForm.querySelector("button").disabled = false;
-        }
-      });
-
-      // --- Event Listener untuk Pencarian Data Siswa ---
-      searchForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const query = searchQuery.value.trim();
-
-        if (!query) {
-          showNotification("Masukkan NISN atau nama untuk mencari.", "error");
-          tableBody.innerHTML =
-            '<tr><td colspan="99" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">Masukkan NISN atau nama untuk mencari.</td></tr>';
-          tableHeaders.innerHTML = ""; // Clear headers if no query
-          return;
-        }
-
-        searchText.textContent = "Mencari...";
-        searchLoadingSpinner.classList.remove("hidden");
-        searchForm.querySelector("button").disabled = true;
-
-        try {
-          const url = new URL(APP_SCRIPT_URL);
-          url.searchParams.append("action", "searchData");
-          url.searchParams.append("query", query);
-
-          const result = await sendRequest(url.toString(), null, "GET");
-
-          if (result.status === "success") {
-            displaySearchResults(result.data);
-            if (result.data.length === 0) {
-              showNotification(
-                "Tidak ada data siswa ditemukan untuk pencarian ini.",
-                "info"
-              ); // 'info' is not defined, use 'error' or 'success'
-            } else {
-              showNotification(
-                `Ditemukan ${result.data.length} hasil.`,
-                "success"
-              );
-            }
-          } else {
-            showNotification(result.message || "Gagal mencari data.", "error");
-            tableHeaders.innerHTML = "";
-            tableBody.innerHTML =
-              '<tr><td colspan="99" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">Terjadi kesalahan saat mencari data.</td></tr>';
-          }
-        } catch (error) {
-          showNotification(
-            "Terjadi kesalahan saat mencari data: " + error.message,
-            "error"
-          );
-          tableHeaders.innerHTML = "";
-          tableBody.innerHTML =
-            '<tr><td colspan="99" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">Terjadi kesalahan saat mencari data.</td></tr>';
-        } finally {
-          searchText.textContent = "Cari Data";
-          searchLoadingSpinner.classList.add("hidden");
-          searchForm.querySelector("button").disabled = false;
-        }
-      });
-
-      /**
-       * Menampilkan hasil pencarian di tabel.
-       * @param {Array<Object>} data Array objek siswa.
-       */
-      function displaySearchResults(data) {
-        tableBody.innerHTML = ""; // Kosongkan body tabel
-        tableHeaders.innerHTML = ""; // Kosongkan header tabel
-
-        if (data.length === 0) {
-          tableBody.innerHTML =
-            '<tr><td colspan="99" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">Tidak ada data ditemukan.</td></tr>';
-          return;
-        }
-
-        // Buat header tabel berdasarkan keys dari objek pertama
-        const headers = Object.keys(data[0]);
-        headers.forEach((header) => {
-          const th = document.createElement("th");
-          th.scope = "col";
-          th.className =
-            "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider";
-          th.textContent = header.replace(/_/g, " "); // Ganti underscore dengan spasi untuk tampilan lebih baik
-          tableHeaders.appendChild(th);
-        });
-
-        // Isi body tabel
-        data.forEach((student) => {
-          const tr = document.createElement("tr");
-          tr.className = "hover:bg-gray-50"; // Hover effect
-          headers.forEach((header) => {
-            const td = document.createElement("td");
-            td.className = "px-6 py-4 whitespace-nowrap text-sm text-gray-900";
-            td.textContent = student[header] || "-"; // Tampilkan '-' jika kosong
-            tr.appendChild(td);
+          const res = await fetch(scriptURL, {
+            method: "POST",
+            body: formData,
           });
-          tableBody.appendChild(tr);
+
+          alert(await res.text());
         });
+
+      // Unggah Dokumen
+      document
+        .getElementById("formDokumen")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = new FormData();
+          formData.append("file", document.getElementById("dokFile").files[0]);
+          formData.append("nisn", document.getElementById("dokNISN").value);
+          formData.append("nama", document.getElementById("dokNama").value);
+          formData.append("jenis", document.getElementById("dokJenis").value);
+
+          const res = await fetch(scriptURL, {
+            method: "POST",
+            body: formData,
+          });
+
+          alert(await res.text());
+        });
+
+      // Cari Data
+      async function cariData() {
+        const query = document.getElementById("cariInput").value;
+        const res = await fetch(`${scriptURL}?q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        document.getElementById("hasilPencarian").textContent = JSON.stringify(
+          data,
+          null,
+          2
+        );
       }
     </script>
   </body>
